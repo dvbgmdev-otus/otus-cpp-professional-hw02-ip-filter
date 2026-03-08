@@ -4,6 +4,20 @@ set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 
 project(ip_filter VERSION 0.0.${PATCH_VERSION})
 
+add_library(ip_filter_lib
+    src/ip_filter.cpp
+)
+
+set_target_properties(ip_filter_lib PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
+
+target_include_directories(ip_filter_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
 add_executable(ip_filter
     src/main.cpp
 )
@@ -12,6 +26,10 @@ set_target_properties(ip_filter PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
+)
+
+target_link_libraries(ip_filter
+    ip_filter_lib
 )
 
 if (MSVC)
