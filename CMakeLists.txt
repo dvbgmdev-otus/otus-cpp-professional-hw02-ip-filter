@@ -82,6 +82,8 @@ target_link_libraries(ip_filter_gtest
     GTest::gtest_main
 )
 
-add_test(NAME ip_filter_gtest COMMAND ip_filter_gtest)
+include(GoogleTest)
+
+gtest_discover_tests(ip_filter_gtest)
 
 include(CPack)
