@@ -62,6 +62,9 @@ enable_testing()
 # -----------------------------
 include(FetchContent)
 
+set(BUILD_GMOCK OFF)
+set(INSTALL_GTEST OFF)
+
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
