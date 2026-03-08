@@ -70,5 +70,18 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(googletest)
 
+# -----------------------------
+# GoogleTest target
+# -----------------------------
+add_executable(ip_filter_gtest
+    tests/gtest/ip_filter_test.cpp
+)
+
+target_link_libraries(ip_filter_gtest
+    ip_filter_lib
+    GTest::gtest_main
+)
+
+add_test(NAME ip_filter_gtest COMMAND ip_filter_gtest)
 
 include(CPack)
