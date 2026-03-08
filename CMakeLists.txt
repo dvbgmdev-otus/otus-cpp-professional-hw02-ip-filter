@@ -55,4 +55,20 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 
 set(CPACK_PACKAGE_CONTACT "d.v.bogomaz@gmail.com")
 
+enable_testing()
+
+# -----------------------------
+# GoogleTest (FetchContent)
+# -----------------------------
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+FetchContent_MakeAvailable(googletest)
+
+
 include(CPack)
