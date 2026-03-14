@@ -8,59 +8,42 @@ BUILD_CMD="
 rm -rf build &&
 cmake -S . -B build &&
 cmake --build build &&
-ctest --test-dir build
+ctest --test-dir build --output-on-failure
 "
 
-echo "==> Detecting OS..."
-OS="$(uname -s)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-ensure_docker_running_macos() {
-    echo "==> macOS detected"
+# Detect if running inside container
+if [ -f /.dockerenv ]; then
+    echo "==> Running inside container"
+    bash -c "$BUILD_CMD"
+    exit 0
+fi
 
-    if ! command -v colima >/dev/null 2>&1; then
-        echo "ERROR: colima not installed. Install via: brew install colima"
-        exit 1
-    fi
-
-    if ! docker info >/dev/null 2>&1; then
-        echo "==> Docker not running. Starting colima..."
-        colima start
-    else
-        echo "==> Docker already running"
-    fi
-}
-
-ensure_docker_running_linux() {
-    echo "==> Linux detected"
-
-    if ! docker info >/dev/null 2>&1; then
-        echo "ERROR: Docker daemon is not running"
-        exit 1
-    fi
-}
-
-case "$OS" in
-    Darwin)
-        ensure_docker_running_macos
-        ;;
-    Linux)
-        ensure_docker_running_linux
-        ;;
-    *)
-        echo "Unsupported OS: $OS"
-        exit 1
-        ;;
-esac
+echo "==> Checking Docker environment..."
+"$SCRIPT_DIR/ensure_docker.sh"
 
 echo "==> Building Docker image (if needed)..."
-docker build -t "$IMAGE_NAME" docker
+#export DOCKER_BUILDKIT=1
+docker build -t "$IMAGE_NAME" ./docker
+
+OS="$(uname -s)"
 
 echo "==> Running build inside container..."
-docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd)":/app \
-    -w /app \
-    "$IMAGE_NAME" \
-    bash -c "$BUILD_CMD"
+
+if [[ "$OS" == "Linux" ]]; then
+    docker run --rm --init \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd -P)":/app \
+        -w /app \
+        "$IMAGE_NAME" \
+        bash -c "$BUILD_CMD"
+else
+    docker run --rm --init \
+        -v "$(pwd -P)":/app \
+        -w /app \
+        "$IMAGE_NAME" \
+        bash -c "$BUILD_CMD"
+fi
 
 echo "==> Build finished successfully"
