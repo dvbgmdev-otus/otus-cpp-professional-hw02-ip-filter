@@ -3,47 +3,90 @@
 set -euo pipefail
 
 IMAGE_NAME="ip_filter_builder"
-
-BUILD_CMD="
-rm -rf build &&
-cmake -S . -B build &&
-cmake --build build &&
-ctest --test-dir build --output-on-failure
-"
+BUILD_DIR="build"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Detect if running inside container
-if [ -f /.dockerenv ]; then
-    echo "==> Running inside container"
-    bash -c "$BUILD_CMD"
-    exit 0
-fi
+########################################
+# Utility
+########################################
 
-echo "==> Checking Docker environment..."
-"$SCRIPT_DIR/ensure_docker.sh"
+log() {
+    echo "==> $*"
+}
 
-echo "==> Building Docker image (if needed)..."
-#export DOCKER_BUILDKIT=1
-docker build -t "$IMAGE_NAME" ./docker
+########################################
+# Build inside container
+########################################
 
-OS="$(uname -s)"
+build_project() {
+    rm -rf "$BUILD_DIR"
 
-echo "==> Running build inside container..."
+    cmake -S . -B "$BUILD_DIR"
+    cmake --build "$BUILD_DIR"
 
-if [[ "$OS" == "Linux" ]]; then
-    docker run --rm --init \
-        -u "$(id -u):$(id -g)" \
-        -v "$(pwd -P)":/app \
-        -w /app \
-        "$IMAGE_NAME" \
-        bash -c "$BUILD_CMD"
-else
-    docker run --rm --init \
-        -v "$(pwd -P)":/app \
-        -w /app \
-        "$IMAGE_NAME" \
-        bash -c "$BUILD_CMD"
-fi
+    ctest --test-dir "$BUILD_DIR" --output-on-failure
+}
 
-echo "==> Build finished successfully"
+run_inside_container() {
+    log "Running inside container"
+    build_project
+}
+
+########################################
+# Host side
+########################################
+
+ensure_docker() {
+    log "Checking Docker environment..."
+    "$SCRIPT_DIR/ensure_docker.sh"
+}
+
+build_image() {
+    log "Building Docker image (if needed)..."
+    docker build -t "$IMAGE_NAME" ./docker
+}
+
+run_container() {
+
+    log "Running build inside container..."
+
+    local os
+    os="$(uname -s)"
+
+    if [[ "$os" == "Linux" ]]; then
+        docker run --rm --init \
+            -u "$(id -u):$(id -g)" \
+            -v "$(pwd -P)":/app \
+            -w /app \
+            "$IMAGE_NAME" \
+            bash scripts/dev.sh internal-build
+    else
+        docker run --rm --init \
+            -v "$(pwd -P)":/app \
+            -w /app \
+            "$IMAGE_NAME" \
+            bash scripts/dev.sh internal-build
+    fi
+}
+
+########################################
+# Main
+########################################
+
+main() {
+
+    # detect container execution
+    if [ -f /.dockerenv ]; then
+        run_inside_container
+        return
+    fi
+
+    ensure_docker
+    build_image
+    run_container
+
+    log "Build finished successfully"
+}
+
+main "$@"
