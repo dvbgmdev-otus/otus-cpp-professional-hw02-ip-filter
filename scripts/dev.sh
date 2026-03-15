@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eEuo pipefail
+trap 'echo "[ERROR] ${BASH_SOURCE[0]}:${LINENO}: \"${BASH_COMMAND}\" failed" >&2' ERR
 
 IMAGE_NAME="ip_filter_builder"
 BUILD_DIR="build"
@@ -12,7 +13,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ########################################
 
 log() {
-    echo "==> $*"
+    local BLUE="\033[34m"
+    local CLEAR="\033[0m"
+    printf "%b===> %s%b\n" "$BLUE" "$*" "$CLEAR"
 }
 
 ########################################
@@ -48,7 +51,6 @@ build_image() {
 }
 
 run_container() {
-
     log "Running build inside container..."
 
     local os
