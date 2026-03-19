@@ -119,7 +119,7 @@ main() {
     parse_args "$@"
     ensure_docker_cli
     if docker_daemon_running; then
-        log_success "Docker already running" "$LOG_INDENT"
+        log_ok "Docker already running" "$LOG_INDENT"
         exit 0
     fi
     # если дошли до сюда, то Docker не запущен 

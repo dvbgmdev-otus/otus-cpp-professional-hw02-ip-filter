@@ -33,7 +33,7 @@ main() {
     if [[ -d "$BUILD_DIR" ]]; then
         log_info "Removing build directory: $BUILD_DIR" "$LOG_INDENT"
         rm -rf "$BUILD_DIR"
-        log_success "Build directory removed" "$LOG_INDENT"
+        log_ok "Build directory removed" "$LOG_INDENT"
     else
         log_warn "Build directory not found: $BUILD_DIR" "$LOG_INDENT"
     fi

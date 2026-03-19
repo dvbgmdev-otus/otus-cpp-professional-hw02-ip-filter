@@ -43,7 +43,7 @@ build_native() {
     log_info "Building project" "$LOG_INDENT"
     cmake --build "$BUILD_DIR"
 
-    log_success "Build completed" "$LOG_INDENT"
+    log_ok "Build completed" "$LOG_INDENT"
 }
 
 # Главная функция

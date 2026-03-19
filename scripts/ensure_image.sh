@@ -64,7 +64,7 @@ build_image() {
         exit 1
     fi
 
-    log_success "Image '$IMAGE_NAME' built" "$LOG_INDENT"
+    log_ok "Image '$IMAGE_NAME' built" "$LOG_INDENT"
 }
 
 # Главная функция
@@ -77,7 +77,7 @@ main() {
     fi
 
     if docker_image_exists; then
-        log_success "Image '$IMAGE_NAME' already exists" "$LOG_INDENT"
+        log_ok "Image '$IMAGE_NAME' already exists" "$LOG_INDENT"
         exit 0
     fi
 
