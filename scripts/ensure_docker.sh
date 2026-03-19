@@ -20,10 +20,11 @@ source "$SCRIPT_DIR/logging.sh" || {
     exit 1
 }
 
-OS="$(uname -s)"
-CHECK_ONLY=false
 LOG_INDENT=3
 LOG_SUBINDENT=6
+
+OS="$(uname -s)"
+CHECK_ONLY=false
 
 # Функция для проверки аргументов
 parse_args() {
