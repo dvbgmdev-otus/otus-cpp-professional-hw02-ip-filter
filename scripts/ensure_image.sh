@@ -23,18 +23,11 @@
 set -eEuo pipefail
 trap 'echo "[ERROR] ${BASH_SOURCE[0]}:${LINENO}: \"${BASH_COMMAND}\" failed" >&2' ERR
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 # shellcheck disable=SC1091
-source "$SCRIPT_DIR/logging.sh" || { 
-    echo "ERROR: logging.sh not found at $SCRIPT_DIR"
-    exit 1
-}
-
-LOG_INDENT=3
-LOG_SUBINDENT=6
-
-IMAGE_NAME="${IMAGE_NAME:-ip_filter_builder}"
+source "$SCRIPT_DIR/lib/config.sh"
+# shellcheck disable=SC1091
+source "$LIB_DIR/logging.sh"
 
 # Проверка наличия Docker файла
 DOCKERFILE_DIR="${DOCKERFILE_DIR:-$SCRIPT_DIR/../docker}"

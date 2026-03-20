@@ -13,17 +13,12 @@
 set -eEuo pipefail
 trap 'echo "[ERROR] ${BASH_SOURCE[0]}:${LINENO}: \"${BASH_COMMAND}\" failed" >&2' ERR
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 # shellcheck disable=SC1091
-source "$SCRIPT_DIR/logging.sh" || { 
-    echo "ERROR: logging.sh not found at $SCRIPT_DIR"
-    exit 1
-}
+source "$SCRIPT_DIR/lib/config.sh"
+# shellcheck disable=SC1091
+source "$LIB_DIR/logging.sh"
 
-LOG_INDENT=3
-LOG_SUBINDENT=6
-
-OS="$(uname -s)"
 CHECK_ONLY=false
 
 # Функция для проверки аргументов
@@ -58,7 +53,9 @@ docker_daemon_running() {
 
 # Функция для проверки Docker окружения
 check_docker_environment() {
-    case "$OS" in
+    os="$(uname -s)"
+    local os
+    case "$os" in
 
         Darwin)
             log_info "Detected OS: macOS" "$LOG_INDENT"
@@ -93,7 +90,7 @@ check_docker_environment() {
             ;;
 
         *)
-            log_error "Unsupported OS: $OS" "$LOG_INDENT"
+            log_error "Unsupported OS: $os" "$LOG_INDENT"
             exit 1
             ;;
     esac

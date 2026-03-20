@@ -4,27 +4,25 @@
 #
 # Описание:
 #   Удаляет директорию сборки (BUILD_DIR).
-#   Использует конфигурацию из common.sh.
+#   Использует конфигурацию из config.sh.
 #
 # Поведение:
 #   - Если директория сборки существует — удаляет её
 #   - Если нет — выводит предупреждение
 #
 # Переменные окружения:
-#   BUILD_DIR — директория сборки (по умолчанию задаётся в common.sh)
+#   BUILD_DIR — директория сборки (по умолчанию задаётся в config.sh)
 #
 # Автор: BGM
 
 set -eEuo pipefail
 trap 'echo "[ERROR] ${BASH_SOURCE[0]}:${LINENO}: \"${BASH_COMMAND}\" failed" >&2' ERR
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 # shellcheck disable=SC1091
-source "$SCRIPT_DIR/common.sh" || {
-    echo "ERROR: common.sh not found at $SCRIPT_DIR"
-    exit 1
-}
+source "$SCRIPT_DIR/lib/config.sh"
+# shellcheck disable=SC1091
+source "$LIB_DIR/logging.sh"
 
 # Главная функция
 main() {

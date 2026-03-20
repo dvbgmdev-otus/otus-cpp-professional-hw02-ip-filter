@@ -6,9 +6,6 @@
 #   - Если скрипт выполняется внутри Docker → выполняет нативную сборку (cmake)
 #   - Если скрипт выполняется на хосте → запускает сборку внутри Docker контейнера
 #
-# Особенности:
-#   - Использует docker_run из common.sh
-#
 # Переменные окружения:
 #   BUILD_DIR — директория сборки (по умолчанию: build)
 #
@@ -21,13 +18,13 @@
 set -eEuo pipefail
 trap 'echo "[ERROR] ${BASH_SOURCE[0]}:${LINENO}: \"${BASH_COMMAND}\" failed" >&2' ERR
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 # shellcheck disable=SC1091
-source "$SCRIPT_DIR/common.sh" || { 
-    echo "ERROR: common.sh not found at $SCRIPT_DIR"
-    exit 1
-}
+source "$SCRIPT_DIR/lib/config.sh"
+# shellcheck disable=SC1091
+source "$LIB_DIR/logging.sh"
+# shellcheck disable=SC1091
+source "$LIB_DIR/docker.sh"
 
 # Проверка где выполняется скрипт (внутри контейнера или на хосте)
 is_inside_docker() {
