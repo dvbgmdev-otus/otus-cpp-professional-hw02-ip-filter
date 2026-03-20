@@ -2,25 +2,26 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "CMake Build",
+            "label": "Container: Build",
             "type": "shell",
-            "command": "cmake --build build --parallel",
-            "group": "build",
+            "command": "bash",
+            "args": [
+                "scripts/build.sh"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "problemMatcher": []
         },
         {
-            "label": "Run Tests",
+            "label": "Container: Clean",
             "type": "shell",
-            "command": "ctest --test-dir build",
-            "group": "test",
+            "command": "bash",
+            "args": [
+                "scripts/clean.sh"
+            ],
             "problemMatcher": []
-        },
-        {
-            "type": "cmake",
-            "label": "CMake: configure",
-            "command": "configure",
-            "problemMatcher": [],
-            "detail": "CMake template configure task"
         }
     ]
 }
