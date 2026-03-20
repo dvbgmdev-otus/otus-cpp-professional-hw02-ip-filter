@@ -32,6 +32,16 @@
             ],
             "group": "test",
             "problemMatcher": []
+        },
+        {
+            "label": "Container: Test",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "scripts/test.sh"
+            ],
+            "group": "test",
+            "problemMatcher": []
         }
     ]
 }
