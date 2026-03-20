@@ -35,9 +35,11 @@ is_inside_docker() {
 build_native() {
     log_stage "Build (native)"
     log_info "Configuring project" "$LOG_INDENT"
-    cmake -S . -B "$BUILD_DIR"
+    log_debug "Running: cmake -S \"$PROJECT_ROOT\" -B \"$BUILD_DIR\"" "$LOG_SUBINDENT"
+    cmake -S "$PROJECT_ROOT" -B "$BUILD_DIR"
 
     log_info "Building project" "$LOG_INDENT"
+    log_debug "Running: cmake --build \"$BUILD_DIR\"" "$LOG_SUBINDENT"
     cmake --build "$BUILD_DIR"
 
     log_ok "Build completed" "$LOG_INDENT"

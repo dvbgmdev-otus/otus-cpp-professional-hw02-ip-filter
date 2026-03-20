@@ -125,7 +125,7 @@ if [[ -z "${__LOGGING_SH_INCLUDED:-}" ]]; then
     #region ====================== API ДЛЯ ЛОГИРОВАНИЯ ======================
     # Уровни логирования
     log_debug() {
-        _log debug "$1" "${2:-}" "[DEBUG]"
+        _log debug "$1" "${2:-}" "[DEBUG]" "$YELLOW"
     }
 
     log_info() {

@@ -55,6 +55,11 @@ if [[ -z "${__DOCKER_SH_INCLUDED:-}" ]]; then
 
         local docker_args=(--rm --init)
 
+        # environment
+        docker_args+=(
+            -e LOG_LEVEL="${LOG_LEVEL:-info}"
+        )
+
         # TTY
         if [[ -t 1 && -t 0 ]]; then
             docker_args+=(-it)
@@ -67,7 +72,7 @@ if [[ -z "${__DOCKER_SH_INCLUDED:-}" ]]; then
 
         # volumes
         docker_args+=(
-            -v "$(pwd -P)":/app
+            -v "$PROJECT_ROOT":/app
             -w /app
         )
 

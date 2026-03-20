@@ -17,16 +17,23 @@ if [[ -z "${__CONFIG_SH_INCLUDED:-}" ]]; then
     # shellcheck disable=SC2034
     readonly LIB_DIR
 
-    # корневая директория со всеми скриптами
-    SHELL_DIR="$(cd "$LIB_DIR/.." && pwd -P)"    
+    # директория со скриптами (scripts)
+    SHELL_DIR="$(cd "$LIB_DIR/.." && pwd -P)"
     # shellcheck disable=SC2034
     readonly SHELL_DIR
 
-    # Имя Docker образа (по умолчанию "ip_filter_builder")
-    readonly IMAGE_NAME="${IMAGE_NAME:-ip_filter_builder}"
+    # корень проекта
+    PROJECT_ROOT="$(cd "$SHELL_DIR/.." && pwd -P)"
+    # shellcheck disable=SC2034
+    readonly PROJECT_ROOT
 
-    # Директория для сборки (по умолчанию "build" в корне проекта)
-    readonly BUILD_DIR="${BUILD_DIR:-build}"
+    # Имя Docker образа
+    # shellcheck disable=SC2034
+    readonly IMAGE_NAME="ip_filter_builder"
+
+    # Директория для сборки проекта
+    # shellcheck disable=SC2034
+    readonly BUILD_DIR="$PROJECT_ROOT/build"
     
     # Отступы для логирования (используются в других скриптах)
     # shellcheck disable=SC2034
