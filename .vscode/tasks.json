@@ -22,6 +22,16 @@
                 "scripts/clean.sh"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "Container: Run",
+            "type": "shell",
+            "command": "bash",
+            "args": [
+                "scripts/run.sh"
+            ],
+            "group": "test",
+            "problemMatcher": []
         }
     ]
 }

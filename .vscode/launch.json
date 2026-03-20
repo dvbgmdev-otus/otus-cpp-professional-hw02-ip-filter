@@ -1,4 +1,18 @@
 {
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "name": "Run (no debug) - ip_filter",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/ip_filter",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "preLaunchTask": "Container: Build"
+        }
+    ]
 }
