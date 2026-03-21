@@ -2,12 +2,10 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Container: Build",
+            "label": "Project: Build",
             "type": "shell",
-            "command": "bash",
-            "args": [
-                "scripts/build.sh"
-            ],
+            "command": "./prj",
+            "args": ["build"],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -15,31 +13,24 @@
             "problemMatcher": []
         },
         {
-            "label": "Container: Clean",
+            "label": "Project: Clean",
             "type": "shell",
-            "command": "bash",
-            "args": [
-                "scripts/clean.sh"
-            ],
+            "command": "./prj",
+            "args": ["clean"],
             "problemMatcher": []
         },
         {
-            "label": "Container: Run",
+            "label": "Project: Run",
             "type": "shell",
-            "command": "bash",
-            "args": [
-                "scripts/run.sh"
-            ],
-            "group": "test",
+            "command": "./prj",
+            "args": ["run"],
             "problemMatcher": []
         },
         {
-            "label": "Container: Test",
+            "label": "Project: Test",
             "type": "shell",
-            "command": "bash",
-            "args": [
-                "scripts/test.sh"
-            ],
+            "command": "./prj",
+            "args": ["test"],
             "group": "test",
             "problemMatcher": []
         }
