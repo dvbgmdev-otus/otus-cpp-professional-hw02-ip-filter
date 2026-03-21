@@ -30,13 +30,14 @@ Commands:
   test     Run tests
   run      Run application
   clean    Remove build artifacts
+  cppcheck Run static analysis with Cppcheck
   help     Show this help
 
 Examples:
   ./scripts/project.sh build
   ./scripts/project.sh test
   ./scripts/project.sh run
-  ./scripts/project.sh run
+  ./scripts/project.sh cppcheck
   ./scripts/project.sh clean
 EOF
 }
@@ -56,6 +57,10 @@ main() {
         run)
             shift
             exec "$SCRIPT_DIR/run.sh" "$@"
+            ;;
+        cppcheck)
+            shift
+            exec "$SCRIPT_DIR/cppcheck.sh" "$@"
             ;;
         clean)
             shift

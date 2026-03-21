@@ -33,6 +33,13 @@
             "args": ["test"],
             "group": "test",
             "problemMatcher": []
+        },
+        {
+            "label": "Project: Cppcheck",
+            "type": "shell",
+            "command": "./prj",
+            "args": ["cppcheck"],
+            "problemMatcher": []
         }
     ]
 }

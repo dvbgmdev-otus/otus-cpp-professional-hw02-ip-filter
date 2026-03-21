@@ -27,6 +27,10 @@ if [[ -z "${__CONFIG_SH_INCLUDED:-}" ]]; then
     # shellcheck disable=SC2034
     readonly PROJECT_ROOT
 
+    # Директория с исходным кодом
+    # shellcheck disable=SC2034
+    readonly SRC_DIR="$PROJECT_ROOT/src"
+
     # Имя Docker образа
     # shellcheck disable=SC2034
     readonly IMAGE_NAME="ip_filter_builder"
