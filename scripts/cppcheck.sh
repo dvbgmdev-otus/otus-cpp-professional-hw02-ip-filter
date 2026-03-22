@@ -34,8 +34,19 @@ if [[ ${#TARGETS[@]} -eq 0 ]]; then
     TARGETS=("$SRC_DIR")
 fi
 
+log_flags() {
+    local flags_str=""
+    local spaces
+    printf -v spaces '%*s' "${LOG_SUBINDENT}" ''
+    for flag in "${CPPCHECK_FLAGS[@]}"; do
+        printf -v flags_str '%s\n%s%s' "$flags_str" "$spaces" "$flag"
+    done
+    log_debug "Cppcheck Flags:$flags_str" "$LOG_INDENT"
+}
+
 main() {
     log_stage "Cppcheck Static Analysis"
+    log_flags # Выводим флаги для отладки (только при LOG_LEVEL=debug)
 
     cppcheck "${CPPCHECK_FLAGS[@]}" "${TARGETS[@]}"
 
