@@ -58,6 +58,7 @@ if [[ -z "${__DOCKER_SH_INCLUDED:-}" ]]; then
         # environment
         docker_args+=(
             -e LOG_LEVEL="${LOG_LEVEL:-info}"
+            -e CLANG_TIDY_MODE="${CLANG_TIDY_MODE:-light}"
         )
 
         # TTY

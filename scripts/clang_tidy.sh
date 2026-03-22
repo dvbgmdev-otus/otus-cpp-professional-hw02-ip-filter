@@ -6,6 +6,10 @@
 #   Запуск clang-tidy с использованием
 #   compile_commands.json, с поддержкой нескольких режимов анализа.
 #
+# Контракт:
+#   - Если скрипт выполняется внутри Docker → выполняет нативный запуск clang-tidy
+#   - Если скрипт выполняется на хосте → запускает анализ внутри Docker контейнера
+#
 # ВАЖНО:
 #   clang-tidy требует compile_commands.json.
 #   Для этого проект должен быть сконфигурирован с:
@@ -50,6 +54,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 source "$SCRIPT_DIR/lib/config.sh"
 # shellcheck disable=SC1091
 source "$LIB_DIR/logging.sh"
+# shellcheck disable=SC1091
+source "$LIB_DIR/docker.sh"
+
+# Проверка где выполняется скрипт (внутри контейнера или на хосте)
+is_inside_docker() {
+    [[ -f /.dockerenv ]]
+}
 
 # ---- Установка конфигурации ----
 set_config() {
@@ -211,22 +222,50 @@ set_targets() {
     done < <(find src -type f -name '*.cpp')
 }
 
-# --- Запуск clang-tidy ---
 run_clang_tidy() {
-    clang-tidy \
+    local cmd_str
+    printf -v cmd_str '%q ' "$@"
+    log_debug "Running: ${cmd_str}" "$LOG_SUBINDENT"
+
+    # Container environment (Ubuntu 24.04 + clang-tidy 18 + libstdc++ 13) emits
+    # system-header diagnostics that are noise for user code analysis.
+    # Filter only the summary lines ('N warning(s) generated', 'Suppressed N warning(s)',
+    # and header-filter hint) while preserving actual diagnostics from checks.
+    "$@" 2>&1 | awk '
+        !/^[0-9]+ warnings? generated\.$/ &&
+        !/^Suppressed [0-9]+ warnings? \([0-9]+ in non-user code\)\.$/ &&
+        !/^Use -header-filter=.* to display errors from all non-system headers\. Use -system-headers to display errors from system headers as well\.$/
+    '
+    return "${PIPESTATUS[0]}"
+}
+
+run_clang_tidy_native() {
+    log_stage "Clang-tidy (native)"
+    run_clang_tidy \
+        clang-tidy \
         "${TARGETS[@]}" \
         "${CLANG_TIDY_FLAGS[@]}" \
-        -p "${BUILD_DIR}"
+        -p "$BUILD_DIR"
+
+    log_ok "clang-tidy completed" "$LOG_INDENT"
 }
 
 main() {
     set_config
-    check_environment
-    set_clang_tidy_checks
-    select_clang_tidy_profile
-    set_clang_tidy_flags
-    set_targets "$@"
-    run_clang_tidy
+
+    if is_inside_docker; then
+        check_environment
+        set_clang_tidy_checks
+        select_clang_tidy_profile
+        set_clang_tidy_flags
+        set_targets "$@"
+        run_clang_tidy_native
+        return
+    fi
+
+    log_stage "Clang-tidy (Docker)"
+    log_info "Running clang-tidy inside container" "$LOG_INDENT"
+    docker_run ./scripts/clang_tidy.sh "$@"
 }
 
 main "$@"

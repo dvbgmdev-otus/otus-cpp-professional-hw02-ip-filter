@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     cmake \
     git \
     libboost-test-dev \
+    clang-tidy \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

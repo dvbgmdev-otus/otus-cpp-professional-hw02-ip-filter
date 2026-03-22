@@ -52,7 +52,7 @@ build_image() {
     log_stage "Building Docker image"
     log_info "Context: $DOCKERFILE_DIR" "$LOG_INDENT"
 
-    if ! docker build -t "$IMAGE_NAME" "$DOCKERFILE_DIR" --progress=plain; then
+    if ! docker build -t "$IMAGE_NAME" "$DOCKERFILE_DIR"; then
         log_error "Failed to build image '$IMAGE_NAME'" "$LOG_INDENT"
         exit 1
     fi
