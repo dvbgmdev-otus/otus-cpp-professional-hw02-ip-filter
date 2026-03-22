@@ -53,8 +53,8 @@ docker_daemon_running() {
 
 # Функция для проверки Docker окружения
 check_docker_environment() {
-    os="$(uname -s)"
     local os
+    os="$(uname -s)"
     case "$os" in
 
         Darwin)
@@ -70,6 +70,10 @@ check_docker_environment() {
                 log_info "Starting Colima..." "$LOG_INDENT"
                 if ! colima start; then
                     log_error "Failed to start Colima" "$LOG_INDENT"
+                    log_text "Check log:" "$LOG_SUBINDENT"
+                    log_text "$HOME/.colima/_lima/colima/ha.stderr.log" "$LOG_SUBINDENT"
+                    log_text "Recovery:" "$LOG_SUBINDENT"
+                    log_text "scripts/reset_colima.sh" "$LOG_SUBINDENT"
                     exit 1
                 fi
                 wait_for_docker
