@@ -40,6 +40,13 @@
             "command": "./prj",
             "args": ["cppcheck"],
             "problemMatcher": []
+        },
+        {
+            "label": "Project: Clang-Tidy",
+            "type": "shell",
+            "command": "./prj",
+            "args": ["tidy"],
+            "problemMatcher": []
         }
     ]
 }

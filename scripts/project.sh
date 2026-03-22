@@ -31,6 +31,7 @@ Commands:
   run      Run application
   clean    Remove build artifacts
   cppcheck Run static analysis with Cppcheck
+  tidy     Run static analysis with clang-tidy
   help     Show this help
 
 Examples:
@@ -38,6 +39,7 @@ Examples:
   ./scripts/project.sh test
   ./scripts/project.sh run
   ./scripts/project.sh cppcheck
+  ./scripts/project.sh tidy
   ./scripts/project.sh clean
 EOF
 }
@@ -61,6 +63,11 @@ main() {
         cppcheck)
             shift
             exec "$SCRIPT_DIR/cppcheck.sh" "$@"
+            ;;
+        tidy)
+            shift
+            "$SCRIPT_DIR/build.sh" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            exec "$SCRIPT_DIR/clang_tidy.sh" "$@"
             ;;
         clean)
             shift
