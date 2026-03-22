@@ -31,16 +31,23 @@ is_inside_docker() {
     [[ -f /.dockerenv ]]
 }
 
+# Запуск cmake
+run_cmake() {
+    local cmd_str
+    printf -v cmd_str '%q ' "$@"
+    log_debug "Running: ${cmd_str}" "$LOG_SUBINDENT"
+    "$@" # вызов cmake
+}
+
 # Чистая сборка
 build_native() {
     log_stage "Build (native)"
+
     log_info "Configuring project" "$LOG_INDENT"
-    log_debug "Running: cmake -S \"$PROJECT_ROOT\" -B \"$BUILD_DIR\"" "$LOG_SUBINDENT"
-    cmake -S "$PROJECT_ROOT" -B "$BUILD_DIR"
+    run_cmake cmake -S "$PROJECT_ROOT" -B "$BUILD_DIR" "$@"
 
     log_info "Building project" "$LOG_INDENT"
-    log_debug "Running: cmake --build \"$BUILD_DIR\"" "$LOG_SUBINDENT"
-    cmake --build "$BUILD_DIR"
+    run_cmake cmake --build "$BUILD_DIR"
 
     log_ok "Build completed" "$LOG_INDENT"
 }
@@ -49,14 +56,14 @@ build_native() {
 main() {
 
     if is_inside_docker; then
-        build_native
+        build_native "$@"
         return
     fi
 
     log_stage "Build (Docker)"
     log_info "Running build inside container" "$LOG_INDENT"
 
-    docker_run ./scripts/build.sh
+    docker_run ./scripts/build.sh "$@"
 }
 
 main "$@"
