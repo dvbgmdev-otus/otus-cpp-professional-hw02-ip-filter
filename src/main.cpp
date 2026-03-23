@@ -1,8 +1,10 @@
 #include <iostream>
 
-#include "ip_filter.h"
+#include "ip_address.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    const IpAddress ip{ "192.168.0.1" };
+    std::cout << ip << '\n';
+
     return 0;
 }
