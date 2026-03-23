@@ -5,7 +5,15 @@
 
 namespace {
 int octetToInt(IpAddress::Octet octet) noexcept { return static_cast<int>(octet); }
-IpAddress::Octet intToOctet(int value) noexcept { return static_cast<IpAddress::Octet>(value); }
+
+IpAddress::Octet intToOctet(int value) {
+    if (value < 0 || value > 255) {
+        throw std::invalid_argument("IP octet out of range");
+    }
+
+    return static_cast<IpAddress::Octet>(value);
+}
+
 IpAddress::Octet strToOctet(const std::string& value) { return intToOctet(std::stoi(value)); }
 }  // namespace
 
