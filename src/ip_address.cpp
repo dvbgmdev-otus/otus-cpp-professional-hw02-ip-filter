@@ -5,6 +5,8 @@
 
 namespace {
 int octetToInt(IpAddress::Octet octet) noexcept { return static_cast<int>(octet); }
+IpAddress::Octet intToOctet(int value) noexcept { return static_cast<IpAddress::Octet>(value); }
+IpAddress::Octet strToOctet(const std::string& value) { return intToOctet(std::stoi(value)); }
 }  // namespace
 
 IpAddress::IpAddress(const std::string& text) {
@@ -17,7 +19,7 @@ IpAddress::IpAddress(const std::string& text) {
         const std::string part =
             (end == std::string::npos) ? text.substr(start) : text.substr(start, end - start);
 
-        m_octets[i] = static_cast<Octet>(std::stoi(part));
+        m_octets[i] = strToOctet(part);
 
         start = end + 1;
     }
