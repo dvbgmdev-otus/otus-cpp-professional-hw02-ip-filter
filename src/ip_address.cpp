@@ -1,6 +1,7 @@
 #include "ip_address.h"
 
 #include <ostream>
+#include <stdexcept>
 #include <string>
 
 namespace {
@@ -14,7 +15,20 @@ IpAddress::Octet intToOctet(int value) {
     return static_cast<IpAddress::Octet>(value);
 }
 
-IpAddress::Octet strToOctet(const std::string& value) { return intToOctet(std::stoi(value)); }
+IpAddress::Octet strToOctet(const std::string& value) {
+    if (value.empty()) {
+        throw std::invalid_argument("IP octet is empty");
+    }
+
+    std::size_t pos = 0;
+    const int parsed = std::stoi(value, &pos);
+
+    if (pos != value.size()) {
+        throw std::invalid_argument("IP octet contains invalid characters");
+    }
+
+    return intToOctet(parsed);
+}
 }  // namespace
 
 IpAddress::IpAddress(const std::string& text) {

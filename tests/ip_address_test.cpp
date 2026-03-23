@@ -72,3 +72,7 @@ TEST(IpAddressTest, ThrowsIfOctetIsGreaterThan255) {
 TEST(IpAddressTest, ThrowsIfInputIsEmpty) {
     EXPECT_THROW({ const IpAddress ip{ "" }; }, std::invalid_argument);
 }
+
+TEST(IpAddressTest, ThrowsIfOctetContainsTrailingCharacters) {
+    EXPECT_THROW({ const IpAddress ip{ "1.12abc.3.4" }; }, std::invalid_argument);
+}
