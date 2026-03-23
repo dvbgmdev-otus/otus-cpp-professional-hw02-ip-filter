@@ -6,7 +6,6 @@ project(ip_filter VERSION 0.0.${PATCH_VERSION})
 
 add_library(ip_filter_lib
     src/ip_address.cpp
-    src/ip_filter.cpp
 )
 
 set_target_properties(ip_filter_lib PROPERTIES
@@ -78,7 +77,7 @@ FetchContent_MakeAvailable(googletest)
 # GoogleTest target
 # -----------------------------
 add_executable(ip_filter_gtest
-    tests/gtest/ip_filter_test.cpp
+    tests/ip_address_test.cpp
 )
 
 target_link_libraries(ip_filter_gtest
