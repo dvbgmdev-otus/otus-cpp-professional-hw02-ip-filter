@@ -33,17 +33,21 @@ IpAddress::Octet strToOctet(const std::string& value) {
 
 IpAddress::IpAddress(const std::string& text) {
     std::size_t start = 0;
-    std::size_t end = 0;
 
     for (std::size_t i = 0; i < m_octets.size(); ++i) {
-        end = text.find('.', start);
+        if (i < m_octets.size() - 1) {
+            const std::size_t end = text.find('.', start);
+            if (end == std::string::npos) {
+                throw std::invalid_argument("IP address must contain exactly 4 octets");
+            }
 
-        const std::string part =
-            (end == std::string::npos) ? text.substr(start) : text.substr(start, end - start);
-
-        m_octets[i] = strToOctet(part);
-
-        start = end + 1;
+            const std::string part = text.substr(start, end - start);
+            m_octets[i] = strToOctet(part);
+            start = end + 1;
+        } else {
+            const std::string part = text.substr(start);
+            m_octets[i] = strToOctet(part);
+        }
     }
 }
 
