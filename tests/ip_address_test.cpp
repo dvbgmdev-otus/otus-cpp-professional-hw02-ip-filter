@@ -76,3 +76,35 @@ TEST(IpAddressTest, ThrowsIfInputIsEmpty) {
 TEST(IpAddressTest, ThrowsIfOctetContainsTrailingCharacters) {
     EXPECT_THROW({ const IpAddress ip{ "1.12abc.3.4" }; }, std::invalid_argument);
 }
+
+TEST(IpAddressTest, ThrowsIfOctetIsTooLargeForInt) {
+    EXPECT_THROW({ const IpAddress ip{ "999999999999999999999.2.3.4" }; }, std::invalid_argument);
+}
+
+TEST(IpAddressTest, ThrowsIfFirstOctetHasLeadingSpace) {
+    EXPECT_THROW({ const IpAddress ip{ " 1.2.3.4" }; }, std::invalid_argument);
+}
+
+TEST(IpAddressTest, ThrowsIfFirstOctetHasPlusSign) {
+    EXPECT_THROW({ const IpAddress ip{ "+1.2.3.4" }; }, std::invalid_argument);
+}
+
+TEST(IpAddressTest, ThrowsIfOctetContainsInternalSpace) {
+    EXPECT_THROW({ const IpAddress ip{ "1.2 .3.4" }; }, std::invalid_argument);
+}
+
+TEST(IpAddressTest, ThrowsIfInputHasTrailingSpace) {
+    EXPECT_THROW({ const IpAddress ip{ "1.2.3.4 " }; }, std::invalid_argument);
+}
+
+TEST(IpAddressTest, ThrowsIfOctetContainsTabCharacter) {
+    EXPECT_THROW({ const IpAddress ip{ "1.2.\t3.4" }; }, std::invalid_argument);
+}
+
+TEST(IpAddressTest, ThrowsIfOctetContainsNewlineCharacter) {
+    EXPECT_THROW({ const IpAddress ip{ "1.2.\n3.4" }; }, std::invalid_argument);
+}
+
+TEST(IpAddressTest, ThrowsIfOctetHasLeadingZeros) {
+    EXPECT_THROW({ const IpAddress ip{ "001.002.003.004" }; }, std::invalid_argument);
+}

@@ -7,27 +7,40 @@
 namespace {
 int octetToInt(IpAddress::Octet octet) noexcept { return static_cast<int>(octet); }
 
-IpAddress::Octet intToOctet(int value) {
-    if (value < 0 || value > 255) {
-        throw std::invalid_argument("IP octet out of range");
-    }
-
-    return static_cast<IpAddress::Octet>(value);
-}
-
 IpAddress::Octet strToOctet(const std::string& value) {
+    // Октет не должен быть пустым
     if (value.empty()) {
         throw std::invalid_argument("IP octet is empty");
     }
 
-    std::size_t pos = 0;
-    const int parsed = std::stoi(value, &pos);
-
-    if (pos != value.size()) {
-        throw std::invalid_argument("IP octet contains invalid characters");
+    // Октет должен состоять только из цифр
+    for (char ch : value) {
+        if (ch < '0' || ch > '9') {
+            throw std::invalid_argument("IP octet contains invalid characters");
+        }
     }
 
-    return intToOctet(parsed);
+    // Октет не должен содержать ведущих нулей (кроме случая, когда октет равен "0")
+    // думал удалять нули, но передумал - валидация должна проверять, но не исправлять
+    if (value.size() > 1 && value.front() == '0') {
+        throw std::invalid_argument("IP octet must not contain leading zeros");
+    }
+
+    // Октет не должен быть длиннее 3 символов, так как максимальное значение - 255
+    if (value.size() > 3) {
+        throw std::invalid_argument("IP octet out of range");
+    }
+
+    // Преобразуем строку в число и проверяем, что она не превышает 255
+    int parsed = 0;
+    for (char ch : value) {
+        parsed = parsed * 10 + static_cast<int>(ch - '0');
+    }
+    if (parsed > 255) {
+        throw std::invalid_argument("IP octet out of range");
+    }
+
+    return static_cast<IpAddress::Octet>(parsed);
 }
 }  // namespace
 
@@ -35,8 +48,9 @@ IpAddress::IpAddress(const std::string& text) {
     std::size_t start = 0;
 
     for (std::size_t i = 0; i < m_octets.size(); ++i) {
-        if (i < m_octets.size() - 1) {
-            const std::size_t end = text.find('.', start);
+        const std::size_t end = text.find('.', start);
+
+        if (i < m_octets.size() - 1) { // для первых 3 октетов
             if (end == std::string::npos) {
                 throw std::invalid_argument("IP address must contain exactly 4 octets");
             }
@@ -44,7 +58,11 @@ IpAddress::IpAddress(const std::string& text) {
             const std::string part = text.substr(start, end - start);
             m_octets[i] = strToOctet(part);
             start = end + 1;
-        } else {
+        } else { // для последнего октета точек быть не должно
+            if (end != std::string::npos) {
+                throw std::invalid_argument("IP address must contain exactly 4 octets");
+            }
+
             const std::string part = text.substr(start);
             m_octets[i] = strToOctet(part);
         }
