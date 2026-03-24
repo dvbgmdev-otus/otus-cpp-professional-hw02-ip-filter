@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include <initializer_list>
 #include <iosfwd>
 #include <string>
 

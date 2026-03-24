@@ -34,8 +34,15 @@ target_link_libraries(ip_filter
 
 if (MSVC)
     target_compile_options(ip_filter PRIVATE /W4)
+    target_compile_options(ip_filter_lib PRIVATE /W4)
 else ()
     target_compile_options(ip_filter PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Werror
+    )
+    target_compile_options(ip_filter_lib PRIVATE
         -Wall
         -Wextra
         -Wpedantic
@@ -56,6 +63,11 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 set(CPACK_PACKAGE_CONTACT "d.v.bogomaz@gmail.com")
 
 enable_testing()
+
+add_test(
+    NAME self_check
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/self_check.sh $<TARGET_FILE:ip_filter>
+)
 
 # -----------------------------
 # GoogleTest (FetchContent)
