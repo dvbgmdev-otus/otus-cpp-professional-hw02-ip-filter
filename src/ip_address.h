@@ -9,13 +9,26 @@
 class IpAddress {
 public:
     using Octet = std::uint8_t;
+    using Octets = std::array<Octet, 4>;
 
     explicit IpAddress(const std::string& text);
 
-    friend std::ostream& operator<<(std::ostream& os, const IpAddress& ip);
+    const Octets& octets() const noexcept;
+
+    bool starts_with(std::initializer_list<Octet> prefix) const noexcept;
+    bool contains(Octet value) const noexcept;
 
 private:
-    std::array<Octet, 4> m_octets{};
+    Octets m_octets{};
 };
+
+bool operator==(const IpAddress& lhs, const IpAddress& rhs) noexcept;
+bool operator!=(const IpAddress& lhs, const IpAddress& rhs) noexcept;
+bool operator<(const IpAddress& lhs, const IpAddress& rhs) noexcept;
+bool operator>(const IpAddress& lhs, const IpAddress& rhs) noexcept;
+bool operator<=(const IpAddress& lhs, const IpAddress& rhs) noexcept;
+bool operator>=(const IpAddress& lhs, const IpAddress& rhs) noexcept;
+
+std::ostream& operator<<(std::ostream& os, const IpAddress& ip);
 
 #endif  // IP_ADDRESS_H

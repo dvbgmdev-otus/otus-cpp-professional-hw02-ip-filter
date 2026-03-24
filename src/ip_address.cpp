@@ -69,12 +69,64 @@ IpAddress::IpAddress(const std::string& text) {
     }
 }
 
+const IpAddress::Octets& IpAddress::octets() const noexcept {
+    return m_octets;
+}
+
+bool IpAddress::starts_with(std::initializer_list<Octet> prefix) const noexcept {
+    if (prefix.size() > m_octets.size()) {
+        return false;
+    }
+
+    auto it = prefix.begin();
+    for (std::size_t i = 0; i < prefix.size(); ++i, ++it) {
+        if (m_octets[i] != *it) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool IpAddress::contains(Octet value) const noexcept {
+    for (const auto& octet : m_octets) {
+        if (octet == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool operator==(const IpAddress& lhs, const IpAddress& rhs) noexcept {
+    return lhs.octets() == rhs.octets();
+}
+
+bool operator!=(const IpAddress& lhs, const IpAddress& rhs) noexcept {
+    return !(lhs == rhs);
+}
+
+bool operator<(const IpAddress& lhs, const IpAddress& rhs) noexcept {
+    return lhs.octets() < rhs.octets();
+}
+
+bool operator>(const IpAddress& lhs, const IpAddress& rhs) noexcept {
+    return rhs < lhs;
+}
+
+bool operator<=(const IpAddress& lhs, const IpAddress& rhs) noexcept {
+    return !(rhs < lhs);
+}
+
+bool operator>=(const IpAddress& lhs, const IpAddress& rhs) noexcept {
+    return !(lhs < rhs);
+}
+
 std::ostream& operator<<(std::ostream& os, const IpAddress& ip) {
     // clang-format off
-    os << octetToInt(ip.m_octets[0]) << '.'
-       << octetToInt(ip.m_octets[1]) << '.'
-       << octetToInt(ip.m_octets[2]) << '.'
-       << octetToInt(ip.m_octets[3]);
+    os << octetToInt(ip.octets()[0]) << '.'
+       << octetToInt(ip.octets()[1]) << '.'
+       << octetToInt(ip.octets()[2]) << '.'
+       << octetToInt(ip.octets()[3]);
     // clang-format on
 
     return os;
