@@ -49,51 +49,14 @@ int main() {
 
         // Выводим отсортированные IP-адреса
         for (const auto& ip : ip_pool) {
-            (void)ip;
-            // std::cout << ip << '\n';
+            std::cout << ip << '\n';
         }
 
-
-        IpAddress::Octet findOctet = 217;
-        std::cout << "findOctet=" << static_cast<int>(findOctet) << ":  ";
-// -----------------------------------------------------------------------------------------------------        
-        std::size_t count;
-        start_time = std::chrono::system_clock::now();
-        count= 0;
-        for (const auto& ip : ip_pool) {
-            if (ip.starts_with({ findOctet })) {
-                // std::cout << ip << '\n';
-            }
-            count++;
-        }
-        end_time = std::chrono::system_clock::now();
-        std::cout << "count=" << count << " "
-                  << std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count() << " ns   ";
-// -----------------------------------------------------------------------------------------------------
-        // отсоритрован по убыванию, потэтому можно пройтись с конца
-        start_time = std::chrono::system_clock::now();
-        count = 0;
-        std::vector<IpAddress>::reverse_iterator it; 
-        for (auto it = ip_pool.rbegin(); it != ip_pool.rend(); ++it) {
-            if (it->starts_with({ findOctet })) {
-                // std::cout << *it << '\n';
-            }
-            count++;
-            if (it->octets()[0] > findOctet) {
-                break;
-            }
-        }
-        end_time = std::chrono::system_clock::now();
-        std::cout << "count=" << count << " " 
-                  << std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count() << " ns   ";
-// -----------------------------------------------------------------------------------------------------
-        // можно поискать бинарным поиском, так как отсортирован по убыванию и найти диапазон
-        start_time = std::chrono::system_clock::now();
-
+        // Выводим IP-адреса, начинающиеся с 1
         auto first = std::lower_bound(
             ip_pool.begin(),
             ip_pool.end(),
-            findOctet,
+            1,
             [](const IpAddress& ip, IpAddress::Octet value) {
                 return ip.octets()[0] > value;
             }
@@ -102,34 +65,27 @@ int main() {
         auto last = std::upper_bound(
             first,
             ip_pool.end(),
-            findOctet,
+            1,
             [](IpAddress::Octet value, const IpAddress& ip) {
                 return ip.octets()[0] < value;
             }
         );
 
-        std::size_t matched = 0;
         for (auto it = first; it != last; ++it) {
-            // std::cout << *it << '\n';
-            ++matched;
+            std::cout << *it << '\n';
         }
-        end_time = std::chrono::system_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count() << " ns\n";
-// -----------------------------------------------------------------------------------------------------
-
-
 
         // Выводим IP-адреса, начинающиеся с 46.70
         for (const auto& ip : ip_pool) {
             if (ip.starts_with({ 46, 70 })) {
-                // std::cout << ip << '\n';
+                std::cout << ip << '\n';
             }
         }
 
         // Выводим IP-адреса, содержащие 46
         for (const auto& ip : ip_pool) {
             if (ip.contains(46)) {
-                // std::cout << ip << '\n';
+                std::cout << ip << '\n';
             }
         }
     } catch (const std::exception& ex) {
