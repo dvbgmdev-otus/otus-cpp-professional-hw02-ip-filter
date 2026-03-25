@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "ip_address.h"
 
@@ -23,8 +24,13 @@ std::vector<std::string> split(const std::string& str, char d) {
     return r;
 }
 
+using SystemTime = std::chrono::time_point<std::chrono::system_clock>;
+
 int main() {
     try {
+        SystemTime start_time;
+        SystemTime end_time;
+
         std::vector<IpAddress> ip_pool;
         std::string line;
 
@@ -47,17 +53,49 @@ int main() {
         }
 
         // Выводим IP-адреса, начинающиеся с 1
-        for (const auto& ip : ip_pool) {
-            if (ip.starts_with({ 1 })) {
-                std::cout << ip << '\n';
+        auto first = std::lower_bound(
+            ip_pool.begin(),
+            ip_pool.end(),
+            1,
+            [](const IpAddress& ip, IpAddress::Octet value) {
+                return ip.octets()[0] > value;
             }
+        );
+
+        auto last = std::upper_bound(
+            first,
+            ip_pool.end(),
+            1,
+            [](IpAddress::Octet value, const IpAddress& ip) {
+                return ip.octets()[0] < value;
+            }
+        );
+
+        for (auto it = first; it != last; ++it) {
+            std::cout << *it << '\n';
         }
 
         // Выводим IP-адреса, начинающиеся с 46.70
-        for (const auto& ip : ip_pool) {
-            if (ip.starts_with({ 46, 70 })) {
-                std::cout << ip << '\n';
-            }
+        // по идее и поиск 1 тоже можно было сделать также
+        const IpAddress high("46.70.255.255");
+        const IpAddress low("46.70.0.0");
+
+        auto first_46_70 = std::lower_bound(
+            ip_pool.begin(),
+            ip_pool.end(),
+            high,
+            std::greater<IpAddress>{}
+        );
+
+        auto last_46_70 = std::upper_bound(
+            first_46_70,
+            ip_pool.end(),
+            low,
+            std::greater<IpAddress>{}
+        );
+
+        for (auto it = first_46_70; it != last_46_70; ++it) {
+            std::cout << *it << '\n';
         }
 
         // Выводим IP-адреса, содержащие 46
