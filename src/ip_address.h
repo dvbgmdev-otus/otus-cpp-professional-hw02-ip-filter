@@ -16,7 +16,6 @@ public:
 
     const Octets& octets() const noexcept;
 
-    bool starts_with(std::initializer_list<Octet> prefix) const noexcept;
     bool contains(Octet value) const noexcept;
 
 private:
