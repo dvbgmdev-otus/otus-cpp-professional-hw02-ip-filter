@@ -1,10 +1,11 @@
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <chrono>
 
 #include "ip_address.h"
+#include "ip_algorithms.h"
 
 // Функция для разделения строки на части по заданному разделителю
 std::vector<std::string> split(const std::string& str, char d) {
@@ -24,14 +25,9 @@ std::vector<std::string> split(const std::string& str, char d) {
     return r;
 }
 
-using SystemTime = std::chrono::time_point<std::chrono::system_clock>;
-
 int main() {
     try {
-        SystemTime start_time;
-        SystemTime end_time;
-
-        std::vector<IpAddress> ip_pool;
+        IpContainer ip_pool;
         std::string line;
 
         // Читаем IP-адреса из стандартного потока ввода, пока не достигнем конца потока
@@ -40,7 +36,6 @@ int main() {
             if (fields.empty()) {
                 continue;
             }
-
             ip_pool.emplace_back(fields.at(0));
         }
 
@@ -53,47 +48,16 @@ int main() {
         }
 
         // Выводим IP-адреса, начинающиеся с 1
-        auto first = std::lower_bound(
-            ip_pool.begin(),
-            ip_pool.end(),
-            1,
-            [](const IpAddress& ip, IpAddress::Octet value) {
-                return ip.octets()[0] > value;
-            }
-        );
-
-        auto last = std::upper_bound(
-            first,
-            ip_pool.end(),
-            1,
-            [](IpAddress::Octet value, const IpAddress& ip) {
-                return ip.octets()[0] < value;
-            }
-        );
-
+        auto [first, last] = find_ip_range(ip_pool.begin(), ip_pool.end(),
+                                           {IpAddress("1.255.255.255"), IpAddress("1.0.0.0")});
         for (auto it = first; it != last; ++it) {
             std::cout << *it << '\n';
         }
 
         // Выводим IP-адреса, начинающиеся с 46.70
-        // по идее и поиск 1 тоже можно было сделать также
-        const IpAddress high("46.70.255.255");
-        const IpAddress low("46.70.0.0");
-
-        auto first_46_70 = std::lower_bound(
-            ip_pool.begin(),
-            ip_pool.end(),
-            high,
-            std::greater<IpAddress>{}
-        );
-
-        auto last_46_70 = std::upper_bound(
-            first_46_70,
-            ip_pool.end(),
-            low,
-            std::greater<IpAddress>{}
-        );
-
+        auto [first_46_70, last_46_70] =
+            find_ip_range(ip_pool.begin(), ip_pool.end(),
+                          {IpAddress("46.70.255.255"), IpAddress("46.70.0.0")});
         for (auto it = first_46_70; it != last_46_70; ++it) {
             std::cout << *it << '\n';
         }
@@ -104,6 +68,7 @@ int main() {
                 std::cout << ip << '\n';
             }
         }
+
     } catch (const std::exception& ex) {
         std::cerr << ex.what() << '\n';
         return 1;
