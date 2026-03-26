@@ -48,16 +48,13 @@ int main() {
         }
 
         // Выводим IP-адреса, начинающиеся с 1
-        auto [first, last] = find_ip_range(ip_pool.begin(), ip_pool.end(),
-                                           {IpAddress("1.255.255.255"), IpAddress("1.0.0.0")});
+        auto [first, last] = find_ip_range(ip_pool, 1);
         for (auto it = first; it != last; ++it) {
             std::cout << *it << '\n';
         }
 
         // Выводим IP-адреса, начинающиеся с 46.70
-        auto [first_46_70, last_46_70] =
-            find_ip_range(ip_pool.begin(), ip_pool.end(),
-                          {IpAddress("46.70.255.255"), IpAddress("46.70.0.0")});
+        auto [first_46_70, last_46_70] = find_ip_range(ip_pool, 46, 70);
         for (auto it = first_46_70; it != last_46_70; ++it) {
             std::cout << *it << '\n';
         }
