@@ -6,6 +6,7 @@ project(ip_filter VERSION 0.0.${PATCH_VERSION})
 
 add_library(ip_filter_lib
     src/ip_address.cpp
+    src/ip_algorithms.cpp
 )
 
 set_target_properties(ip_filter_lib PROPERTIES
