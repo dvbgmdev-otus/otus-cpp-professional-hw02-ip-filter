@@ -73,21 +73,6 @@ const IpAddress::Octets& IpAddress::octets() const noexcept {
     return m_octets;
 }
 
-bool IpAddress::starts_with(std::initializer_list<Octet> prefix) const noexcept {
-    if (prefix.size() > m_octets.size()) {
-        return false;
-    }
-
-    auto it = prefix.begin();
-    for (std::size_t i = 0; i < prefix.size(); ++i, ++it) {
-        if (m_octets[i] != *it) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 bool IpAddress::contains(Octet value) const noexcept {
     for (const auto& octet : m_octets) {
         if (octet == value) {
