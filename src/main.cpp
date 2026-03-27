@@ -48,8 +48,8 @@ int main() {
         }
 
         // Выводим IP-адреса, начинающиеся с 1
-        auto [first, last] = find_ip_range(ip_pool, 1);
-        for (auto it = first; it != last; ++it) {
+        auto [first_1, last_1] = find_ip_range(ip_pool, 1);
+        for (auto it = first_1; it != last_1; ++it) {
             std::cout << *it << '\n';
         }
 
