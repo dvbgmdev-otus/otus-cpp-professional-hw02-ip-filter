@@ -20,10 +20,9 @@ struct IpRangeFilter {
 
 IpRange find_ip_range(IpIter first, IpIter last, const IpRangeFilter& range);
 
-IpRange find_ip_range(const IpContainer& ip_pool, IpAddress::Octet first_octet);
+template <typename... Octets>
+IpRange find_ip_range(const IpContainer& ip_pool, Octets... octets);
 
-IpRange find_ip_range(const IpContainer& ip_pool,
-                      IpAddress::Octet first_octet,
-                      IpAddress::Octet second_octet);
+#include "ip_algorithms.tpp"
 
 #endif  // IP_ALGORITHMS_H
